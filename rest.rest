@@ -1,0 +1,26 @@
+GET http://localhost:8080/movies
+
+###
+
+ POST http://localhost:8080/movies/add-movies
+ Content-Type: application/json
+ 
+{
+           "id": "144",
+            "title": "The Hateful Eight",
+            "year": "2015",
+            "runtime": "187",
+            "genres": [
+                "Crime",
+                "Drama",
+                "Mystery"
+            ],
+            "director": "Quentin Tarantino",
+            "actors": "Samuel L. Jackson, Kurt Russell, Jennifer Jason Leigh, Walton Goggins",
+            "plot": "In the dead of a Wyoming winter, a bounty hunter and his prisoner find shelter in a cabin currently inhabited by a collection of nefarious characters.",
+            "posterUrl": "https://images-na.ssl-images-amazon.com/images/M/MV5BMjA1MTc1NTg5NV5BMl5BanBnXkFtZTgwOTM2MDEzNzE@._V1_SX300.jpg"
+}
+
+###
+
+GET http://localhost:8080/movies/66fed5a4a23058dee96a5817
