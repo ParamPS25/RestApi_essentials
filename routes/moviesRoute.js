@@ -14,30 +14,57 @@ const router = express.Router();
 // to apply regex and case insensitive to each req.query key ie. [runtime,gener,year..etc]
 
 router.get("/",async(req,res)=>{
+    console.log(req.query)
+    try{
+        let sortFlag = false;
+        let sortFix = '';
+        let selectFlag = false;
+        let selectFix = '';
+        let query = {};
+        // Apply regex to string fields and handle numeric fields separately
+
+        for (let key in req.query) {
+            if (isNaN(req.query[key]) && key != 'genres' && key != 'sort' && key != 'select') {        // Apply regex for string fields
+                query[key] = { $regex: req.query[key], $options: "i" };
+            }
+            else if(key === 'genres'){
+                let genresArr = req.query.genres.split(',') // /movies?genres=Comedy,Fantasy => string to arr
+                query[key] = { $in:genresArr}               //as query[key], key=genres => genres:{$in:genresArr}
+            }
+            else if(key === 'sort'){                            // as movies?sort=title,year => seprate , with space as Movie.find().sort(sortQuery)
+                sortFlag = true;
+
+                sortFix = req.query.sort.replace(","," ");
+                console.log('Sort fields:', sortFix);
+            }
+            else if(key === 'select'){
+                selectFlag = true;
+
+                selectFix = req.query.select.replace(","," ");
+                console.log('select fields', selectFix);
+            }
+            else {                                                            // Directly assign the value for numeric fields
+                query[key] = Number(req.query[key]);
+            }
+
+            console.log(`Query for ${key}:`, query[key]);
+        }
+        console.log(query);
+        //const allMovies = await Movie.find(req.query);   //.find({}) all movies || ({year=2007}) queried movie
+
+        let allMovies;
+        if(sortFlag){
+            allMovies = selectFlag ? await Movie.find(query).sort(sortFix).select(selectFix)
+                                    : await Movie.find(query).sort(sortFix);
+        }else{
+            allMovies = selectFlag ? await Movie.find(query).select(selectFix)
+                                    : await Movie.find(query);
+        }
+        res.json({allMovies:allMovies});
     
-    let query = {};
-    // Apply regex to string fields and handle numeric fields separately
-
-    for (let key in req.query) {
-        if (isNaN(req.query[key]) && key != 'genres') {        // Apply regex for string fields
-            query[key] = { $regex: req.query[key], $options: "i" };
-        }
-        else if(key === 'genres'){
-            let genresArr = req.query.genres.split(',') // /movies?genres=Comedy,Fantasy => string to arr
-            query[key] = { $in:genresArr}               //as query[key], key=genres => genres:{$in:genresArr}
-        }
-         else {                                                            // Directly assign the value for numeric fields
-            query[key] = Number(req.query[key]);
-        }
-
-        console.log(`Query for ${key}:`, query[key]);
+    }catch(e){
+        res.status(500).json({msg:"internal server error"})
     }
-    console.log(query);
-    //const allMovies = await Movie.find(req.query);   //.find({}) all movies || ({year=2007}) queried movie
-
-    const allMovies = await Movie.find(query).sort("titile");
-    res.json({allMovies:allMovies});
-    // console.log(req.query);
 });
 
 router.post("/add-movies",async(req,res)=>{
