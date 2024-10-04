@@ -24,3 +24,36 @@ GET http://localhost:8080/movies
 ###
 
 GET http://localhost:8080/movies/66fed5a4a23058dee96a5817
+
+###
+
+GET http://localhost:8080/movies?year=2007
+
+###
+
+GET http://localhost:8080/movies?year=2007&runtime=111
+
+###
+
+GET http://localhost:8080/movies?year=2007&title=Ratatouille
+###
+
+GET http://localhost:8080/movies?title=ratatoUillE
+###
+
+GET http://localhost:8080/movies?year=2007&title=rat
+# Query for year: 2007
+# Query for title: { '$regex': 'rat', '$options': 'i' }
+# { year: 2007, title: { '$regex': 'rat', '$options': 'i' } }
+###
+
+GET http://localhost:8080/movies?genres=Animation,Comedy
+# Query for genres: { '$in': [ 'Animation', 'Comedy' ] }
+# { genres: { '$in': [ 'Animation', 'Comedy' ] } }
+
+###
+
+GET http://localhost:8080/movies?year=2007&genres=Animation,Comedy
+# Query for year: 2007
+# Query for genres: { '$in': [ 'Animation', 'Comedy' ] }
+# { year: 2007, genres: { '$in': [ 'Animation', 'Comedy' ] } }
