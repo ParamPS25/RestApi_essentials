@@ -90,3 +90,15 @@ GET http://localhost:8080/movies?select=title,year
 GET http://localhost:8080/movies?sort=year&select=title,year
 
 ###
+
+GET http://localhost:8080/movies?page=1&limit=4
+
+###
+
+GET http://localhost:8080/movies?genres=Comedy&page=1&limit=2
+
+###
+
+GET http://localhost:8080/movies?genres=Comedy&sort=year&page=18&limit=2
+
+###
